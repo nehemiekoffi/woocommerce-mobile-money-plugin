@@ -1,0 +1,9 @@
+#mm_operator_field select{
+    border: 1px solid #dedede;
+    padding: .7em .5em;
+    width: 100%;
+}
+
+.payment_method_wc_mmpayment img{
+    height: 45px;
+}
