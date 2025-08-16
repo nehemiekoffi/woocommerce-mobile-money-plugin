@@ -92,6 +92,11 @@ function init_mobilemoney_payment() {
                     'default' => 'Mobile Money',
                     'desc_tip'    => true,
                 ),
+                'icon_url' => array(
+                    'title'       => 'Icon URL',
+                    'type'        => 'text',
+                    'description' => "Lien de l'icone que l'utilisateur verra",
+                ),
                 'description' => array(
                     'title'       => 'Description',
                     'type'        => 'textarea',
