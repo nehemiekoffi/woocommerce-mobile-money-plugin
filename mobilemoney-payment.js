@@ -12,10 +12,10 @@
     })
 
     function checkValue(value){
-        var instruction = mmpayment_data.operators[value];
+        const instruction = mmpayment_data.operators[value];
         
         if(instruction && instruction !== ""){
-            var message = "Composez <b>" + instruction + "</b>";
+            const message = instruction.length <=7 ? "Composez <b>" + instruction + "</b>" : instruction;
             $("#mm_instruction").html(message);
         } else {
             $("#mm_instruction").html("");
