@@ -1,10 +1,10 @@
 <?php
 /*
- * Plugin Name: WooCommerce Mobile Money CI
+ * Plugin Name: WooCommerce Mobile Money
  * Description: Recevez simplement des paiements via Mobile Money.
  * Author: Nehemie KOFFI
  * Author URI: https://nehemiekoffi.wordpress.com
- * Version: 1.0.3
+ * Version: 1.0.4
  *
  */
 
@@ -75,7 +75,7 @@ function init_mobilemoney_payment() {
 		/**
  		 * Plugin options, we deal with it in Step 3 too
  		 */
- 		public function init_form_fields(){
+		public function init_form_fields(){
 
             $this->form_fields = array(
                 'enabled' => array(
@@ -92,52 +92,124 @@ function init_mobilemoney_payment() {
                     'default' => 'Mobile Money',
                     'desc_tip'    => true,
                 ),
-                'icon_url' => array(
-                    'title'       => 'Icon URL',
-                    'type'        => 'text',
-                    'description' => "Lien de l'icone que l'utilisateur verra",
-                ),
                 'description' => array(
                     'title'       => 'Description',
                     'type'        => 'textarea',
                     'description' => 'This controls the description which the user sees during checkout.',
                     'default'     => 'Payez à partir de votre compte mobile money',
                 ),
-                'mtnmoney_msisdn' => array(
-                    'title'       => 'Numéro MTN Money',
+                'operator_1_name' => array(
+                    'title'       => 'Operator #1 Name',
                     'type'        => 'text',
+                    'description' => 'Enter the name of the first mobile money operator (e.g., Wave, MTN Money)',
+                    'default'     => 'Wave',
+                    'desc_tip'    => true,
+                ),
+                'operator_1_phone' => array(
+                    'title'       => 'Operator #1 Phone Number',
+                    'type'        => 'text',
+                    'description' => 'Enter the phone number for the first operator',
                     'default'     => '05000000',
+                    'desc_tip'    => true,
                 ),
-                'mtnmoney_ussd_code' => array(
-                    'title'       => 'Code USSD MTN Money',
+                'operator_1_instruction' => array(
+                    'title'       => 'Operator #1 Payment Instruction',
                     'type'        => 'text',
-                    'default'     => '*133#',
+                    'description' => 'Enter the payment instruction for the first operator',
+                    'default'     => 'Faites un transfert à partir de l\'application',
+                    'desc_tip'    => true,
                 ),
-                'orangemoney_msisdn' => array(
-                    'title'       => 'Numéro Orange Money',
+                'operator_2_name' => array(
+                    'title'       => 'Operator #2 Name',
                     'type'        => 'text',
-                    'default'     => '08000000',
+                    'description' => 'Enter the name of the second mobile money operator',
+                    'default'     => 'MTN Money',
+                    'desc_tip'    => true,
                 ),
-                'orangemoney_ussd_code' => array(
-                    'title'       => 'Code USSD Orange Money',
+                'operator_2_phone' => array(
+                    'title'       => 'Operator #2 Phone Number',
                     'type'        => 'text',
-                    'default'     => '*144#',
+                    'description' => 'Enter the phone number for the second operator',
+                    'default'     => '05000000',
+                    'desc_tip'    => true,
                 ),
-                'moovmoney_msisdn' => array(
-                    'title'       => 'Numéro Moov Money',
+                'operator_2_instruction' => array(
+                    'title'       => 'Operator #2 Payment Instruction',
                     'type'        => 'text',
-                    'default'     => '01000000',
+                    'description' => 'Enter the payment instruction for the second operator',
+                    'default'     => 'Faites un transfert à partir de l\'application ou via USSD ###',
+                    'desc_tip'    => true,
                 ),
-                'moovmoney_ussd_code' => array(
-                    'title'       => 'Code USSD Moov Money',
+                'operator_3_name' => array(
+                    'title'       => 'Operator #3 Name',
                     'type'        => 'text',
-                    'default'     => '*155#',
+                    'description' => 'Enter the name of the third mobile money operator',
+                    'default'     => 'Orange Money',
+                    'desc_tip'    => true,
+                ),
+                'operator_3_phone' => array(
+                    'title'       => 'Operator #3 Phone Number',
+                    'type'        => 'text',
+                    'description' => 'Enter the phone number for the third operator',
+                    'default'     => '07000000',
+                    'desc_tip'    => true,
+                ),
+                'operator_3_instruction' => array(
+                    'title'       => 'Operator #3 Payment Instruction',
+                    'type'        => 'text',
+                    'description' => 'Enter the payment instruction for the third operator',
+                    'default'     => 'Faites un transfert à partir de l\'application ou via USSD ###',
+                    'desc_tip'    => true,
+                ),
+                'operator_4_name' => array(
+                    'title'       => 'Operator #4 Name',
+                    'type'        => 'text',
+                    'description' => 'Enter the name of the fourth mobile money operator (leave empty if not needed)',
+                    'default'     => '',
+                    'desc_tip'    => true,
+                ),
+                'operator_4_phone' => array(
+                    'title'       => 'Operator #4 Phone Number',
+                    'type'        => 'text',
+                    'description' => 'Enter the phone number for the fourth operator',
+                    'default'     => '',
+                    'desc_tip'    => true,
+                ),
+                'operator_4_instruction' => array(
+                    'title'       => 'Operator #4 Payment Instruction',
+                    'type'        => 'text',
+                    'description' => 'Enter the USSD code or payment instruction for the fourth operator',
+                    'default'     => '',
+                    'desc_tip'    => true,
                 )
             );
  
  
          }
          
+         /**
+          * Get active operators data
+          */
+         private function get_active_operators() {
+             $operators = array();
+             
+             for ($i = 1; $i <= 4; $i++) {
+                 $name = $this->get_option("operator_{$i}_name");
+                 $phone = $this->get_option("operator_{$i}_phone");
+                 $instruction = $this->get_option("operator_{$i}_instruction");
+                 
+                 // Only add operators that have a name (not empty)
+                 if (!empty($name)) {
+                     $operators[] = array(
+                         'name' => $name,
+                         'phone' => $phone,
+                         'instruction' => $instruction
+                     );
+                 }
+             }
+             
+             return $operators;
+         }
  
 		/**
 		 * You will need it if you want your custom credit card form, Step 4 is about it
@@ -145,6 +217,7 @@ function init_mobilemoney_payment() {
 		public function payment_fields() {
 
             global $woocommerce;
+            $active_operators = $this->get_active_operators();
 
             echo 
             "<fieldset>
@@ -153,16 +226,9 @@ function init_mobilemoney_payment() {
                 <select name='mm_operator'>
                 ";
 
-                if($this->get_option( 'mtnmoney_msisdn') != ""){
-                    echo '<option value="MTN Money">MTN Money ('. $this->get_option( 'mtnmoney_msisdn') .')</option>';
+                foreach ($active_operators as $operator) {
+                    echo '<option value="' . esc_attr($operator['name']) . '">' . esc_html($operator['name']) . ' (' . esc_html($operator['phone']) . ')</option>';
                 }
-                if($this->get_option( 'orangemoney_msisdn') != ""){
-                    echo '<option value="Orange Money">Orange Money ('. $this->get_option( 'orangemoney_msisdn') .')</option>';
-                }
-                if($this->get_option( 'moovmoney_msisdn') != ""){
-                    echo '<option value="Moov Money">Moov Money ('. $this->get_option( 'moovmoney_msisdn') .')</option>';
-                }
-                
                 
             echo '
             </select>
@@ -197,13 +263,17 @@ function init_mobilemoney_payment() {
         
             wp_enqueue_script( 'mmpayment_js' );
 
-            wp_localize_script( 'mmpayment_js', 'mmpayment_data', 
-                array( 
-                'mtnmoney_ussd_code' => $this->get_option( 'mtnmoney_ussd_code' ),
-                'orangemoney_ussd_code'=> $this->get_option( 'orangemoney_ussd_code' ),
-                'moovmoney_ussd_code' => $this->get_option( 'moovmoney_ussd_code' )
-                ) 
-            );
+            // Get active operators for JavaScript
+            $active_operators = $this->get_active_operators();
+            $operators_data = array();
+            
+            foreach ($active_operators as $operator) {
+                $operators_data[$operator['name']] = $operator['instruction'];
+            }
+
+            wp_localize_script( 'mmpayment_js', 'mmpayment_data', array(
+                'operators' => $operators_data
+            ));
 
 	 	}
  
