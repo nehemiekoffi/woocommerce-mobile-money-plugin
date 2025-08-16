@@ -1,0 +1,205 @@
+/**
+ * Mobile Money Blocks CSS
+ * Enhanced styling for WooCommerce Blocks
+ */
+
+/* Blocks-specific container */
+.mobile-money-blocks-fields {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px 0;
+}
+
+/* Blocks form styling */
+.mobile-money-blocks-fields .form-row {
+    margin-bottom: 15px;
+}
+
+.mobile-money-blocks-fields .form-row label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.mobile-money-blocks-fields .form-row input,
+.mobile-money-blocks-fields .form-row select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.mobile-money-blocks-fields .form-row input:focus,
+.mobile-money-blocks-fields .form-row select:focus {
+    outline: none;
+    border-color: #007cba;
+    box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.2);
+}
+
+/* Operator selection styling */
+.mobile-money-operator-select {
+    background-color: white;
+    cursor: pointer;
+}
+
+.mobile-money-operator-select option {
+    padding: 8px;
+}
+
+/* Instruction display */
+.mobile-money-instruction {
+    background: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 15px;
+    color: #005a87;
+}
+
+.mobile-money-instruction p {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Blocks integration styling */
+.wc-block-components-payment-method .mobile-money-blocks-fields {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.wc-block-components-payment-method .mobile-money-blocks-fields .form-row {
+    margin-bottom: 20px;
+}
+
+.wc-block-components-payment-method .mobile-money-blocks-fields .form-row label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+}
+
+.wc-block-components-payment-method .mobile-money-blocks-fields .form-row input,
+.wc-block-components-payment-method .mobile-money-blocks-fields .form-row select {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.wc-block-components-payment-method .mobile-money-blocks-fields .form-row input:focus,
+.wc-block-components-payment-method .mobile-money-blocks-fields .form-row select:focus {
+    border-color: #007cba;
+    box-shadow: 0 0 0 1px #007cba;
+}
+
+/* Cart blocks styling */
+.wc-block-components-cart .mobile-money-blocks-fields {
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 15px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .mobile-money-blocks-fields {
+        padding: 15px;
+    }
+    
+    .mobile-money-blocks-fields .form-row input,
+    .mobile-money-blocks-fields .form-row select {
+        padding: 10px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .mobile-money-blocks-fields {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .mobile-money-blocks-fields .form-row label {
+        color: #e2e8f0;
+    }
+    
+    .mobile-money-blocks-fields .form-row input,
+    .mobile-money-blocks-fields .form-row select {
+        background: #4a5568;
+        border-color: #718096;
+        color: #e2e8f0;
+    }
+    
+    .mobile-money-instruction {
+        background: #2c5282;
+        border-color: #4a5568;
+        color: #90cdf4;
+    }
+}
+
+/* WooCommerce Blocks specific overrides */
+.wc-block-checkout__payment-method .mobile-money-blocks-fields {
+    margin: 0;
+    padding: 0;
+}
+
+.wc-block-checkout__payment-method .mobile-money-blocks-fields .form-row {
+    margin-bottom: 16px;
+}
+
+.wc-block-checkout__payment-method .mobile-money-blocks-fields .form-row:last-child {
+    margin-bottom: 0;
+}
+
+/* Error states */
+.mobile-money-blocks-fields .form-row.error input,
+.mobile-money-blocks-fields .form-row.error select {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2);
+}
+
+.mobile-money-blocks-fields .form-row.error .error-message {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+/* Success states */
+.mobile-money-blocks-fields .form-row.success input,
+.mobile-money-blocks-fields .form-row.success select {
+    border-color: #28a745;
+}
+
+/* Loading states */
+.mobile-money-blocks-fields.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.mobile-money-blocks-fields.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007cba;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

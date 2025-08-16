@@ -4,35 +4,80 @@
  * Description: Recevez simplement des paiements via Mobile Money.
  * Author: Nehemie KOFFI
  * Author URI: https://nehemiekoffi.wordpress.com
- * Version: 1.0.4
+ * Version: 1.0.5
+ * Requires at least: 5.0
+ * Tested up to: 6.4
+ * Requires PHP: 7.4
+ * WC requires at least: 5.0
+ * WC tested up to: 8.3
  *
  */
 
- /*
+/**
+ * Version compatibility check and Blocks support
+ */
+function mobilemoney_check_version_compatibility() {
+    // Check if WooCommerce is active
+    if (!class_exists('WooCommerce')) {
+        return false;
+    }
+    
+    // Get WooCommerce version
+    $wc_version = WC()->version;
+    
+    // For WooCommerce 8.3.0 and above, load Blocks implementation
+    if (version_compare($wc_version, '8.3.0', '>=')) {
+        // Load Blocks implementation
+        if (file_exists(plugin_dir_path(__FILE__) . 'blocks/blocks-loader.php')) {
+            require_once plugin_dir_path(__FILE__) . 'blocks/blocks-loader.php';
+        }
+        return 'blocks';
+    }
+    
+    // For WooCommerce 8.2.x and below, use legacy implementation
+    return 'legacy';
+}
+
+// Check version compatibility
+$mobilemoney_implementation = mobilemoney_check_version_compatibility();
+
+/*
  * This action hook registers our PHP class as a WooCommerce payment gateway
+ * Only register legacy gateway if we're not using Blocks
  */
 
-add_filter( 'woocommerce_payment_gateways', 'mobilemoney_payment' );
-function mobilemoney_payment( $gateways ) {
-	$gateways[] = 'WC_MobileMoney_Payment_Gateway'; // your class name is here
-	return $gateways;
+if ($mobilemoney_implementation === 'legacy') {
+    add_filter('woocommerce_payment_gateways', 'mobilemoney_payment');
+}
+
+function mobilemoney_payment($gateways) {
+    $gateways[] = 'WC_MobileMoney_Payment_Gateway'; // your class name is here
+    return $gateways;
 }
 
 /**
  * Display field value on the order edit page
+ * Works for both legacy and Blocks implementations
  */
-add_action( 'woocommerce_admin_order_data_after_billing_address', 'mmpayment_display_admin_order_meta', 10, 1 );
+add_action('woocommerce_admin_order_data_after_billing_address', 'mmpayment_display_admin_order_meta', 10, 1);
 
-function mmpayment_display_admin_order_meta($order){
-    echo '<p><strong>'.__('Opérateur Mobile Money').':</strong> ' . get_post_meta( $order->id, 'Operateur Mobile Money', true ) . '</p>';
-    echo '<p><strong>'.__('Numéro Mobile Money').':</strong> ' . get_post_meta( $order->id, 'Numéro Mobile Money', true ) . '</p>';
-    echo '<p><strong>'.__('ID transaction Mobile Money').':</strong> ' . get_post_meta( $order->id, 'ID transaction Mobile Money', true ) . '</p>';
+function mmpayment_display_admin_order_meta($order) {
+    // Handle both legacy and new order objects
+    $order_id = method_exists($order, 'get_id') ? $order->get_id() : $order->id;
+    
+    echo '<p><strong>' . __('Opérateur Mobile Money') . ':</strong> ' . get_post_meta($order_id, 'Operateur Mobile Money', true) . '</p>';
+    echo '<p><strong>' . __('Numéro Mobile Money') . ':</strong> ' . get_post_meta($order_id, 'Numéro Mobile Money', true) . '</p>';
+    echo '<p><strong>' . __('ID transaction Mobile Money') . ':</strong> ' . get_post_meta($order_id, 'ID transaction Mobile Money', true) . '</p>';
 }
 
 /*
  * The class itself, please note that it is inside plugins_loaded action hook
+ * Only initialize legacy gateway if we're not using Blocks
  */
-add_action( 'plugins_loaded', 'init_mobilemoney_payment' );
+if ($mobilemoney_implementation === 'legacy') {
+    add_action('plugins_loaded', 'init_mobilemoney_payment');
+}
+
 function init_mobilemoney_payment() {
  
 	class WC_MobileMoney_Payment_Gateway extends WC_Payment_Gateway {
@@ -326,7 +371,48 @@ function init_mobilemoney_payment() {
                 'result' => 'success',
                 'redirect' => $this->get_return_url( $order )
             );
-	 	}
+	 	 	}
 
- 	}
+}
+
+/**
+ * Compatibility and initialization function
+ * Ensures proper loading order and compatibility
+ */
+function mobilemoney_plugin_init() {
+    global $mobilemoney_implementation;
+    
+    // If we're using Blocks, ensure the loader is properly initialized
+    if ($mobilemoney_implementation === 'blocks') {
+        // The Blocks loader should already be loaded, but let's make sure
+        if (!class_exists('WC_MobileMoney_Blocks_Loader')) {
+            if (file_exists(plugin_dir_path(__FILE__) . 'blocks/blocks-loader.php')) {
+                require_once plugin_dir_path(__FILE__) . 'blocks/blocks-loader.php';
+            }
+        }
+    }
+    
+    // Add any additional compatibility hooks here
+    add_action('admin_notices', 'mobilemoney_admin_notices');
+}
+
+/**
+ * Admin notices for compatibility
+ */
+function mobilemoney_admin_notices() {
+    global $mobilemoney_implementation;
+    
+    if ($mobilemoney_implementation === 'blocks') {
+        echo '<div class="notice notice-info is-dismissible">';
+        echo '<p><strong>Mobile Money Payment:</strong> Using Blocks-compatible implementation for WooCommerce 8.3+</p>';
+        echo '</div>';
+    } elseif ($mobilemoney_implementation === 'legacy') {
+        echo '<div class="notice notice-warning is-dismissible">';
+        echo '<p><strong>Mobile Money Payment:</strong> Using legacy implementation. Consider upgrading to WooCommerce 8.3+ for Blocks support.</p>';
+        echo '</div>';
+    }
+}
+
+// Initialize the plugin
+add_action('plugins_loaded', 'mobilemoney_plugin_init', 30);
 }
