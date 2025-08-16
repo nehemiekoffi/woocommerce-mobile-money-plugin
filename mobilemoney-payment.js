@@ -12,19 +12,13 @@
     })
 
     function checkValue(value){
-        var code;
-        if(value == "MTN Money"){
-            code = mmpayment_data.mtnmoney_ussd_code;
-        }
-        if(value == "Orange Money"){
-            code = mmpayment_data.orangemoney_ussd_code;
-        }
-        if(value == "Moov Money"){
-            code = mmpayment_data.moovmoney_ussd_code;
-        }
-        if(code != ""){
-            var message = "Composez <b>" +  code + "</b>";
+        var instruction = mmpayment_data.operators[value];
+        
+        if(instruction && instruction !== ""){
+            var message = "Composez <b>" + instruction + "</b>";
             $("#mm_instruction").html(message);
+        } else {
+            $("#mm_instruction").html("");
         }
     }
 
