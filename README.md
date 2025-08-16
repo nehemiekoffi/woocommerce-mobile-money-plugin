@@ -1,4 +1,4 @@
-# WooCommerce Mobile Money CI
+# WooCommerce Mobile Money
 Woocommerce payment plugin for mobile money payment.
 
 ## How it works

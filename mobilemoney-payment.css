@@ -1,6 +1,7 @@
 #mm_operator_field select{
     border: 1px solid #dedede;
     padding: .7em .5em;
+    font-size: var(--wp--preset--font-size--medium);
     width: 100%;
 }
 

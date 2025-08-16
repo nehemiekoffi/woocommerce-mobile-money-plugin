@@ -1,6 +1,6 @@
 <?php
 /*
- * Plugin Name: WooCommerce Mobile Money CI
+ * Plugin Name: WooCommerce Mobile Money
  * Description: Recevez simplement des paiements via Mobile Money.
  * Author: Nehemie KOFFI
  * Author URI: https://nehemiekoffi.wordpress.com
@@ -91,6 +91,11 @@ function init_mobilemoney_payment() {
                     'description' => 'This controls the title which the user sees during checkout.',
                     'default' => 'Mobile Money',
                     'desc_tip'    => true,
+                ),
+                'icon_url' => array(
+                    'title'       => 'Icon URL',
+                    'type'        => 'text',
+                    'description' => "Lien de l'icone que l'utilisateur verra",
                 ),
                 'description' => array(
                     'title'       => 'Description',
@@ -223,7 +228,7 @@ function init_mobilemoney_payment() {
             "<fieldset>
             <p id='mm_operator_field' class='form-row form-row-wide'>
                 <label>Veuillez éffectuer un dépôt de ".$woocommerce->cart->get_cart_total()." sur l'un des numéros ci-dessous : </label> 
-                <select name='mm_operator'>
+                <select name='mm_operator' style='width: 100%;'>
                 ";
 
                 foreach ($active_operators as $operator) {
@@ -236,7 +241,7 @@ function init_mobilemoney_payment() {
             </p>
             <p class="form-row form-row-wide validate-required">
                 <label>Numéro Mobile Money <abbr class="required" title="obligatoire">*</abbr></label>
-                <input type="text" class="input-text " name="mm_sender_msisdn" placeholder="Numéro ayant éffectué le dépot" value="">
+                <input type="text" class="input-text" name="mm_sender_msisdn" placeholder="Numéro ayant éffectué le dépot" value="">
             </p>
             <p class="form-row form-row-wide validate-required">
                 <label>ID de la transaction <abbr class="required" title="obligatoire">*</abbr></label>
