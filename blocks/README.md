@@ -93,14 +93,6 @@ Extend the gateway classes for custom business logic:
 3. **JavaScript errors**: Check browser console for errors
 4. **Payment processing**: Verify gateway settings
 
-### Debug Mode
-
-Enable WordPress debug mode to see detailed error messages:
-```php
-define('WP_DEBUG', true);
-define('WP_DEBUG_LOG', true);
-```
-
 ## Support
 
 For issues related to the Blocks implementation:
